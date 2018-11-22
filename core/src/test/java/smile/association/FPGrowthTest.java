@@ -225,7 +225,18 @@ public class FPGrowthTest {
         time = System.currentTimeMillis();
         List<ItemSet> results = fpgrowth.learn();
         System.out.format("%d frequent item sets discovered: %.2f secs.%n", results.size(), (System.currentTimeMillis() - time) / 1000.0);
-        
+
         assertEquals(219725, results.size());
     }
+
+	@Test
+	public void smileFPGFailTest() {
+		int[][] dataset = {{1, 2}, {3}, {1, 2, 3}}; // NG
+
+		FPGrowth fpg = new FPGrowth(dataset, 1.0d);
+		List<ItemSet> itemsets = fpg.learn();
+		itemsets.forEach(i -> {System.out.println(i);});
+		assertEquals(0, itemsets.size());
+	}
+
 }

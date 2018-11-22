@@ -46,11 +46,11 @@ public class ARM {
     /**
      * FP-growth algorithm object.
      */
-    private FPGrowth fim;
+    protected FPGrowth fim;
     /**
      * Compressed set enumeration tree.
      */
-    private TotalSupportTree ttree;
+    protected TotalSupportTree ttree;
 
     /**
      * Constructor. This is for mining frequent item sets by scanning database twice.
@@ -143,7 +143,7 @@ public class ARM {
      * @param node the current node in the T-tree.
      * @param confidence the confidence threshold for association rules.
      */
-    private long learn(PrintStream out, List<AssociationRule> list, int[] itemset, int size, Node node, double confidence) {
+    protected long learn(PrintStream out, List<AssociationRule> list, int[] itemset, int size, Node node, double confidence) {
         long n = 0;
         if (node.children == null) {
             return n;
@@ -168,7 +168,7 @@ public class ARM {
      * @param support the associated support value for the item set.
      * @param confidence the confidence threshold for association rules.
      */
-    private long learn(PrintStream out, List<AssociationRule> list, int[] itemset, int support, double confidence) {
+    protected long learn(PrintStream out, List<AssociationRule> list, int[] itemset, int support, double confidence) {
         long n = 0;
         // Determine combinations
         int[][] combinations = getPowerSet(itemset);
@@ -212,7 +212,7 @@ public class ARM {
     /**
      * Returns the complement of subset.
      */
-    private static int[] getComplement(int[] subset, int[] fullset) {
+    protected static int[] getComplement(int[] subset, int[] fullset) {
         int size = fullset.length - subset.length;
 
         // Returns null if no complement

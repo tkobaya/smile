@@ -34,7 +34,7 @@ import smile.math.Math;
  *
  * @author Haifeng Li
  */
-final class FPTree {
+public final class FPTree {
 
     /**
      * FP-tree node object.

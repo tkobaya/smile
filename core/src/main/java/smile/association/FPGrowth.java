@@ -161,12 +161,12 @@ public class FPGrowth {
      * Mines the frequent item sets. The discovered frequent item sets
      * will be stored in a total support tree.
      */
-    TotalSupportTree buildTotalSupportTree() {
+    public TotalSupportTree buildTotalSupportTree() {
         TotalSupportTree ttree = new TotalSupportTree(minSupport, T0.numFreqItems, T0.order);
         learn(null, null, ttree);
         return ttree;
     }
-    
+
     /**
      * Mines the frequent item sets. The discovered frequent item sets
      * will be printed out to the provided stream.
@@ -281,30 +281,38 @@ public class FPGrowth {
             for (int i = 0; i < 2*nprocs; i++) {
                 headers.add(new ArrayList<>());
             }
-            
+
             for (int i = fptree.headerTable.length; i-- > 0;) {
-                headers.get(i % headers.size()).add(fptree.headerTable[i]);  
+                headers.get(i % headers.size()).add(fptree.headerTable[i]);
             }
-            
+
             List<FPGrowthTask> tasks = new ArrayList<>();
+
             // Loop through header table from end to start, item by item
             for (int i = 0; i < headers.size(); i++) {
-                // process trail of links from header table element
-                tasks.add(new FPGrowthTask(headers.get(i), out, list, ttree));
+            	// process trail of links from header table element
+                // check whther T0 has itemset
+                if (T0.maxItemSetSize != -1) {
+                	tasks.add(new FPGrowthTask(headers.get(i), out, list, ttree));
+                } else {
+                	logger.warn("No-freq-item workaround was activated");
+                	// do not add task
+                }
             }
+
 
             long n = 0;
             try {
                 List<Long> results = MulticoreExecutor.run(tasks);
-                
+
                 for (long i : results) {
                     n += i;
                 }
             } catch (Exception e) {
                 logger.error("Failed to run FPGrowth on multi-core", e);
-            }         
+            }
             return n;
-            
+
         } else {
             long n = 0;
             // Loop through header table from end to start, item by item
@@ -469,11 +477,11 @@ public class FPGrowth {
      * @param item the new item to be inserted.
      * @return the combined item set
      */
-    static int[] insert(int[] itemset, int item) {
+    public static int[] insert(int[] itemset, int item) {
         if (itemset == null) {
             int[] newItemset = {item};
             return newItemset;
-            
+
         } else {
             int n = itemset.length + 1;
             int[] newItemset = new int[n];
