@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>smile</groupId>
   <artifactId>smile</artifactId>
-  <version>1.5.2-tklab-p1</version>
+  <version>1.5.2-tklab-p2</version>
   <packaging>jar</packaging>
 
   <properties>

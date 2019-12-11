@@ -52,18 +52,20 @@ import smile.util.MulticoreExecutor;
  * links between the branches, is exploited to quickly find the
  * transactions containing a given item and also to remove this
  * item from the transactions after it has been processed.
- * 
+ *
  * <h2>References</h2>
  * <ol>
  * <li> Jiawei Han, Jian Pei, Yiwen Yin, and Runying Mao. Mining frequent patterns without candidate generation. Data Mining and Knowledge Discovery 8:53-87, 2004.</li>
  * <li> Gosta Grahne and Jianfei Zhu. Fast algorithms for frequent itemset mining using FP-trees. IEEE TRANS. ON KNOWLEDGE AND DATA ENGINEERING 17(10):1347-1362, 2005.</li>
  * <li> Christian Borgelt. An Implementation of the FP-growth Algorithm. OSDM, 1-5, 2005.</li>
  * </ol>
- * 
+ *
  * @author Haifeng Li
  */
 public class FPGrowth {
-    private static final Logger logger = LoggerFactory.getLogger(FPGrowth.class);
+    private static final int MAX_FPTREE_HEIGHT = 10;
+
+	private static final Logger logger = LoggerFactory.getLogger(FPGrowth.class);
 
     /**
      * The required minimum support of item sets.
@@ -282,6 +284,18 @@ public class FPGrowth {
                 headers.add(new ArrayList<>());
             }
 
+            int hit = 0;
+            if (prefixItemset != null) {
+            	for (int i : prefixItemset) {
+            		if (i > 0) {
+            			hit++;
+            		}
+            	}
+            	if (hit > 20) {
+            		return 0;
+            	}
+            }
+
             for (int i = fptree.headerTable.length; i-- > 0;) {
                 headers.get(i % headers.size()).add(fptree.headerTable[i]);
             }
@@ -352,12 +366,21 @@ public class FPGrowth {
      * Mines all combinations along a single path tree
      */
     private long grow(PrintStream out, List<ItemSet> list, TotalSupportTree ttree, FPTree.Node node, int[] itemset, int support) {
+
         int height = 0;
         for (FPTree.Node currentNode = node; currentNode != null; currentNode = currentNode.parent) {
             height ++;
         }
 
+
         int n = 0;
+
+        if (height >= FPGrowth.MAX_FPTREE_HEIGHT) {
+        	System.err.println("Detect large frequent itemset. Stop to mine larger ones than size (" + FPGrowth.MAX_FPTREE_HEIGHT + ")");
+        	return n;
+        }
+
+
         if (height > 0) {
             int[] items = new int[height];
             int i = 0;

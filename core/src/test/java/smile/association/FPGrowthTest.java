@@ -239,4 +239,23 @@ public class FPGrowthTest {
 		assertEquals(0, itemsets.size());
 	}
 
+	// bug case 2019/07
+	@Test
+	public void lowMinSupFPGTest() {
+		int[][] dataset = {
+				{2,4,5},
+				{1,2,3,4},
+				{4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33}
+				};
+
+		//double minSup = 0.34d; // OK
+		double minSup = 0.33d; // NG (minSup is less than 1/3. Do not finish to generate 2^30 nodes)
+
+		FPGrowth fpg = new FPGrowth(dataset, minSup);
+		//fpg.learn(System.err);
+		List<ItemSet> itemsets = fpg.learn();
+		itemsets.forEach(i -> {System.out.println(i);});
+		assertEquals(8, itemsets.size());
+	}
+
 }
